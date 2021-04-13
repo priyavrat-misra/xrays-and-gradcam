@@ -4,7 +4,7 @@ import random
 
 class_names = ['normal', 'pneumonia', 'covid_19', 'lung_opacity']
 root_dir = 'data/COVID-19_Radiography_Dataset'
-source_dirs = ['NORMAL', 'Viral Pneumonia', 'COVID', 'Lung_Opacity']
+source_dirs = ['Normal', 'Viral Pneumonia', 'COVID', 'Lung_Opacity']
 
 os.mkdir(os.path.join(root_dir, 'train'))
 os.mkdir(os.path.join(root_dir, 'test'))

@@ -1,3 +1,4 @@
+import csv
 import torch
 import numpy as np
 from tqdm import tqdm
@@ -45,9 +46,14 @@ def get_num_correct(preds, labels):
 
 
 def fit(epochs, model, criterion, optimizer, train_dl, valid_dl):
+    model_name = type(model).__name__.lower()
     valid_loss_min = np.Inf
     len_train = 21005
     len_valid = 80
+    fields = [
+        'epoch', 'train_loss', 'train_acc', 'valid_loss', 'valid_acc'
+    ]
+    rows = []
 
     for epoch in range(epochs):
         train_loss, train_correct = 0, 0
@@ -69,18 +75,24 @@ def fit(epochs, model, criterion, optimizer, train_dl, valid_dl):
             train_loop.set_postfix(
                 loss=loss.item(), acc=train_correct/len_train
             )
+        train_loss = train_loss/len_train
+        train_acc = train_correct/len_train
 
         model.eval()
         with torch.no_grad():
-            valid_loss = 0
+            valid_loss, valid_correct = 0, 0
             for batch in valid_dl:
                 images, labels = batch[0].to(device), batch[1].to(device)
                 preds = model(images)
                 loss = criterion(preds, labels)
                 valid_loss += loss.item() * labels.size(0)
+                valid_correct += get_num_correct(preds, labels)
 
-            train_loss = train_loss/len_train
             valid_loss = valid_loss/len_valid
+            valid_acc = valid_correct/len_valid
+
+            rows.append([epoch, train_loss, train_acc, valid_loss, valid_acc])
+
             train_loop.write(f'\n\t\tAvg train loss: {train_loss:.6f}', end='')
             train_loop.write(f'\tAvg valid loss: {valid_loss:.6f}')
 
@@ -91,6 +103,12 @@ def fit(epochs, model, criterion, optimizer, train_dl, valid_dl):
                 train_loop.write('\t\tsaving model...')
                 torch.save(
                     model.state_dict(),
-                    f'models/lr3e-5_{type(model).__name__.lower()}_{device}.pt'
+                    f'models/lr3e-5_{model_name}_{device}.pth'
                 )
                 valid_loss_min = valid_loss
+
+    # write running results for plots
+    with open(f'outputs/CSVs/{model_name}.csv', 'w') as csv_file:
+        csv_writer = csv.writer(csv_file)
+        csv_writer.writerow(fields)
+        csv_writer.writerows(rows)

@@ -93,14 +93,16 @@ def fit(epochs, model, criterion, optimizer, train_dl, valid_dl):
 
             rows.append([epoch, train_loss, train_acc, valid_loss, valid_acc])
 
-            train_loop.write(f'\n\t\tAvg train loss: {train_loss:.6f}', end='')
-            train_loop.write(f'\tAvg valid loss: {valid_loss:.6f}')
+            train_loop.write(
+                f'\n\t\tAvg train loss: {train_loss:.6f}', end='\t'
+            )
+            train_loop.write(f'Avg valid loss: {valid_loss:.6f}\n')
 
             # save model if validation loss has decreased
             if valid_loss <= valid_loss_min:
                 train_loop.write('\t\tvalid_loss decreased', end=' ')
                 train_loop.write(f'({valid_loss_min:.6f} -> {valid_loss:.6f})')
-                train_loop.write('\t\tsaving model...')
+                train_loop.write('\t\tsaving model...\n')
                 torch.save(
                     model.state_dict(),
                     f'models/lr3e-5_{model_name}_{device}.pth'
@@ -112,3 +114,12 @@ def fit(epochs, model, criterion, optimizer, train_dl, valid_dl):
         csv_writer = csv.writer(csv_file)
         csv_writer.writerow(fields)
         csv_writer.writerows(rows)
+
+
+# worker init function for randomness in multiprocess dataloading
+def wif(id):
+    process_seed = torch.initial_seed()
+    base_seed = process_seed - id
+    ss = np.random.SeedSequence([id, base_seed])
+    # More than 128 bits (4 32-bit words) would be overkill.
+    np.random.seed(ss.generate_state(4))

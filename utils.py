@@ -45,6 +45,30 @@ def get_num_correct(preds, labels):
     return preds.argmax(dim=1).eq(labels).sum().item()
 
 
+def get_all_preds(model, loader):
+    model.eval()
+    with torch.no_grad():
+        all_preds = torch.tensor([], device=device)
+        for batch in loader:
+            images = batch[0].to(device)
+            preds = model(images)
+            all_preds = torch.cat((all_preds, preds), dim=0)
+
+    return all_preds
+
+
+def get_confmat(targets, preds):
+    stacked = torch.stack(
+        (torch.as_tensor(targets, device=device),
+         preds.argmax(dim=1)), dim=1
+    ).tolist()
+    confmat = torch.zeros(4, 4, dtype=torch.int16)
+    for t, p in stacked:
+        confmat[t, p] += 1
+
+    return confmat
+
+
 def fit(epochs, model, criterion, optimizer, train_dl, valid_dl):
     model_name = type(model).__name__.lower()
     valid_loss_min = np.Inf

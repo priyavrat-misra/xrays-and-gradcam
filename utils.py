@@ -69,6 +69,25 @@ def get_confmat(targets, preds):
     return confmat
 
 
+def get_results(confmat, classes):
+    results = {}
+    d = confmat.diagonal()
+    for i, l in enumerate(classes):
+        tp = d[i].item()
+        tn = d.sum().item() - tp
+        fp = confmat[i].sum().item() - tp
+        fn = confmat[:, i].sum().item() - tp
+
+        accuracy = (tp+tn)/(tp+tn+fp+fn)
+        recall = tp/(tp+fn)
+        precision = tp/(tp+fp)
+        f1score = (2*precision*recall)/(precision+recall)
+
+        results[l] = [accuracy, recall, precision, f1score]
+
+    return results
+
+
 def fit(epochs, model, criterion, optimizer, train_dl, valid_dl):
     model_name = type(model).__name__.lower()
     valid_loss_min = np.Inf

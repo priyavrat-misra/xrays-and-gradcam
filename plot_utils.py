@@ -10,13 +10,17 @@ def plot_summary(path):
     plt.style.use('seaborn-whitegrid')
     fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(14, 4))
 
-    ax1.plot(data['epoch'], data['train_loss'], marker='.', label='Train Loss')
-    ax1.plot(data['epoch'], data['valid_loss'], marker='.', label='Valid Loss')
+    ax1.plot(data['epoch'], data['train_loss'], label='Train Loss')
+    ax1.plot(data['epoch'], data['valid_loss'], label='Valid Loss')
+    ax1.axhline(data['valid_loss'].min(),
+                linestyle=(0, (5, 10)), linewidth=0.5)
+    ax1.axvline(data['valid_loss'].idxmin(),
+                linestyle=(0, (5, 10)), linewidth=0.5)
+    ax1.text(11, data['valid_loss'].min(), 'min valid loss',
+             backgroundcolor='white', va='center', size=7.5)
 
-    ax2.plot(data['epoch'], data['train_acc'],
-             marker='.', label='Train Accuracy')
-    ax2.plot(data['epoch'], data['valid_acc'],
-             marker='.', label='Valid Accuracy')
+    ax2.plot(data['epoch'], data['train_acc'], label='Train Accuracy')
+    ax2.plot(data['epoch'], data['valid_acc'], label='Valid Accuracy')
 
     ax1.legend()
     ax1.set_title('Running Loss', fontweight='bold')

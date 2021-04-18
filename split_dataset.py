@@ -22,9 +22,9 @@ for c in class_names:
 
     images = [i for i in os.listdir(os.path.join(
         root_dir, c)) if i.lower().endswith('png')]
-    test_images = random.sample(images, 20)
+    test_images = random.sample(images, 60)
     images = list(set(images) - set(test_images))
-    val_images = random.sample(images, 20)
+    val_images = random.sample(images, 60)
 
     for image in test_images:
         shutil.move(

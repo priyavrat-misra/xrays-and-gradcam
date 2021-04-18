@@ -91,8 +91,7 @@ def get_results(confmat, classes):
 def fit(epochs, model, criterion, optimizer, train_dl, valid_dl):
     model_name = type(model).__name__.lower()
     valid_loss_min = np.Inf
-    len_train = 21005
-    len_valid = 80
+    len_train, len_valid = 20685, 240
     fields = [
         'epoch', 'train_loss', 'train_acc', 'valid_loss', 'valid_acc'
     ]

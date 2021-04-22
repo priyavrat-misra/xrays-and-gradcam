@@ -78,29 +78,31 @@ def apply_mask(image, mask):
 
 
 def plot_gradcam(image, vgg_cam, res_cam, dense_cam):
-    image = image.numpy()
-    image = np.squeeze(np.transpose(image[-1], (1, 2, 0)))
+    image = image.cpu().numpy()
+    image = np.squeeze(np.transpose(image[0], (1, 2, 0)))
     image = image * np.array((0.229, 0.224, 0.225)) + \
         np.array((0.485, 0.456, 0.406))
     image = image.clip(0, 1)
 
     name_dict = {
         'Original Image': image,
-        'GradCAM (VGG-16)': apply_mask(vgg_cam, image),
-        'GradCAM (ResNet-18)': apply_mask(res_cam, image),
-        'GradCAM (DenseNet-18)': apply_mask(dense_cam, image)
+        'GradCAM (VGG-16)': apply_mask(image, vgg_cam),
+        'GradCAM (ResNet-18)': apply_mask(image, res_cam),
+        'GradCAM (DenseNet-121)': apply_mask(image, dense_cam)
     }
 
     plt.style.use('seaborn-notebook')
     fig = plt.figure(figsize=(20, 4))
     for i, (name, img) in enumerate(name_dict.items()):
         ax = fig.add_subplot(1, 4, i+1, xticks=[], yticks=[])
+        if i:
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         ax.imshow(img)
         ax.set_xlabel(name, fontweight='bold')
 
     fig.suptitle(
         'Localization with Gradient based Class Activation Maps',
-        fontweight='bold'
+        fontweight='bold', fontsize=16
     )
     plt.tight_layout()
     fig.savefig('outputs/grad_cam.png')

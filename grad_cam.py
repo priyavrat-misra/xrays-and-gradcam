@@ -9,7 +9,7 @@ class GradCAM:
         self.gradients = []
 
         target_layer.register_forward_hook(self.save_featuremaps)
-        target_layer.register_full_backward_hook(self.save_gradients)
+        target_layer.register_backward_hook(self.save_gradients)
 
     def save_featuremaps(self, module, input, output):
         self.featuremaps.append(output)

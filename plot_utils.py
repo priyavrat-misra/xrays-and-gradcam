@@ -1,3 +1,5 @@
+import cv2
+import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -63,5 +65,44 @@ def plot_confmat(train_mat, test_mat, classes, filename):
 
     plt.tight_layout()
     fig.savefig(f'outputs/confusion_matrices/{filename}')
+    plt.show()
+    plt.close()
+
+
+def apply_mask(image, mask):
+    heatmap = cv2.applyColorMap(np.uint8(255 * mask), cv2.COLORMAP_JET)
+    heatmap = np.float32(heatmap) / 255
+    cam = heatmap + np.float32(image)
+    cam = cam / np.max(cam)
+    return np.uint8(255 * cam)
+
+
+def plot_gradcam(image, vgg_cam, res_cam, dense_cam):
+    image = image.numpy()
+    image = np.squeeze(np.transpose(image[-1], (1, 2, 0)))
+    image = image * np.array((0.229, 0.224, 0.225)) + \
+        np.array((0.485, 0.456, 0.406))
+    image = image.clip(0, 1)
+
+    name_dict = {
+        'Original Image': image,
+        'GradCAM (VGG-16)': apply_mask(vgg_cam, image),
+        'GradCAM (ResNet-18)': apply_mask(res_cam, image),
+        'GradCAM (DenseNet-18)': apply_mask(dense_cam, image)
+    }
+
+    plt.style.use('seaborn-notebook')
+    fig = plt.figure(figsize=(20, 4))
+    for i, (name, img) in enumerate(name_dict.items()):
+        ax = fig.add_subplot(1, 4, i+1, xticks=[], yticks=[])
+        ax.imshow(img)
+        ax.set_xlabel(name, fontweight='bold')
+
+    fig.suptitle(
+        'Localization with Gradient based Class Activation Maps',
+        fontweight='bold'
+    )
+    plt.tight_layout()
+    fig.savefig('outputs/grad_cam.png')
     plt.show()
     plt.close()

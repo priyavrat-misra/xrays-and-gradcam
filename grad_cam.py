@@ -20,14 +20,14 @@ class GradCAM:
     def get_cam_weights(self, grads):
         return np.mean(grads, axis=(1, 2))
 
-    def __call__(self, image, target=None):
+    def __call__(self, image, label=None):
         preds = self.model(image)
         self.model.zero_grad()
 
-        if target is None:
-            target = preds.argmax(dim=1).item()
+        if label is None:
+            label = preds.argmax(dim=1).item()
 
-        preds[:, target].backward()
+        preds[:, label].backward()
 
         featuremaps = self.featuremaps[-1].cpu().data.numpy()[0, :]
         gradients = self.gradients[-1].cpu().data.numpy()[0, :]

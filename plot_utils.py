@@ -96,7 +96,7 @@ def plot_gradcam(image, vgg_cam, res_cam, dense_cam):
     for i, (name, img) in enumerate(name_dict.items()):
         ax = fig.add_subplot(1, 4, i+1, xticks=[], yticks=[])
         if i:
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            img = img[:, :, ::-1]
         ax.imshow(img)
         ax.set_xlabel(name, fontweight='bold')
 

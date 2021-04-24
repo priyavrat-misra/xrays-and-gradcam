@@ -141,6 +141,7 @@ def fit(epochs, model, criterion, optimizer, train_dl, valid_dl):
             train_loop.write(f'Avg valid loss: {valid_loss:.6f}\n')
 
             # save model if validation loss has decreased
+            # (sometimes also referred as "Early stopping")
             if valid_loss <= valid_loss_min:
                 train_loop.write('\t\tvalid_loss decreased', end=' ')
                 train_loop.write(f'({valid_loss_min:.6f} -> {valid_loss:.6f})')
@@ -159,6 +160,7 @@ def fit(epochs, model, criterion, optimizer, train_dl, valid_dl):
 
 
 # worker init function for randomness in multiprocess dataloading
+# https://github.com/pytorch/pytorch/issues/5059#issuecomment-817392562
 def wif(id):
     process_seed = torch.initial_seed()
     base_seed = process_seed - id

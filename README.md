@@ -17,14 +17,14 @@
 > The project uses the COVID-19 Radiography Database [[3]](https://www.kaggle.com/tawsifurrahman/covid19-radiography-database) as it's dataset.
 > It has a total of `21165` Chest X-Rays (CXRs) belonging to 4 different classes (`COVID-19`, `Lung Opacity`, `Normal` and `Viral Pneumonia`).<br>
 > Three top scoring CNN architectures, __VGG-16__, __ResNet-18__ and __DenseNet-121__, trained on the ImageNet Dataset [[4]](http://image-net.org/), were chosen for __fine-tuning__ on the dataset.<br>
-> The results obtained from the different arcitectures were then evaluted.<br>
+> The results obtained from the different architectures were then evaluted and compared.<br>
 > Finally, with the help of __Gradient weighted Class Activation Maps__ (Grad-CAM) [[5]](https://arxiv.org/abs/1610.02391 "Grad-CAM: Visual Explanations from Deep Networks via Gradient-based Localization") the affected areas in CXRs were localized.<br>
 
 * ___Note:___ The dataset and the trained models can be found in [here](https://drive.google.com/drive/folders/14L8wd-d2a3lvgqQtwV-y53Gsnn6Ud2-w?usp=sharing).<br>
 
 ## Steps
-> 1. [Explore dataset](./1_data_exploration.ipynb "1_data_exploration.ipynb")
-> 2. [Split the dataset as follows](./split_dataset.py "split_dataset.py")
+> 1. [Dataset Exploration](./1_data_exploration.ipynb "1_data_exploration.ipynb")
+> 2. [Split the dataset](./split_dataset.py "split_dataset.py")
 >    |Type|COVID-19|Lung Opacity|Normal|Viral Pneumonia|Total|
 >    |:-|-:|-:|-:|-:|-:|
 >    |Train|3496|5892|10072|1225|20685|
@@ -35,17 +35,24 @@
 >    2. [Handle imbalanced dataset with Weighted Random Sampling (Over-sampling)](#)
 >    3. [Prepare the Pre-trained models](./networks.py "networks.py")
 >    4. [Fine-tune step with Early-stopping](./utils.py#L91-L159)
+>       - |Hyper-parameters||
+>         |:-|-:|
+>         |Learning rate|`0.00003`|
+>         |Batch Size|`32`|
+>         |Number of Epochs|`25`|
+>       - |Loss Function|Optimizer|
+>         |:-:|:-:|
+>         |`Categorical Cross Entropy`|`Adam`|
 >    5. [Plot running losses & accuracies](./plot_utils.py#L8-L42)
 >       |Model|Summary Plot|
 >       |:-:|:-:|
 >       |VGG-16|![vgg_plot](./outputs/summary_plots/vgg.png)|
 >       |ResNet-18|![res_plot](./outputs/summary_plots/resnet.png)|
 >       |DenseNet-121|![dense_plot](./outputs/summary_plots/densenet.png)|
-> 4. [Evaluate Results](./3_evaluate_results.ipynb "3_evaluate_results.ipynb")
+> 4. [Results Evaluation](./3_evaluate_results.ipynb "3_evaluate_results.ipynb")
 >    1. [Plot confusion matrices](./plot_utils.py#L45-L69)
 >    2. [Compute test-set Accuracy, Precision, Recall & F1-score](./utils.py#L72-L88)
 >    3. [Localize using Grad-CAM](./grad_cam.py)
-> <br>
 <br>
 
 ## Results
@@ -100,6 +107,40 @@
 </td>
 </tr>
 <tr>
+<td>
+
+|TL;DR|
+|:-|
+|Train set|
+|Test set|
+
+</td>
+<td>
+
+|Total Correct Predictions|Total Accuracy|
+|-:|-:|
+|20362|98.44%|
+|229|__95.42%__|
+
+</td>
+<td>
+
+|Total Correct Predictions|Total Accuracy|
+|-:|-:|
+|20639|99.78%|
+|230|__95.83%__|
+
+</td>
+<td>
+
+|Total Correct Predictions|Total Accuracy|
+|-:|-:|
+|20540|99.30%|
+|230|__95.83%__|
+
+</td>
+</tr>
+<tr>
 <td>Confusion Matrices</td>
 <td>
 
@@ -120,48 +161,20 @@
 </table>
 <br>
 
-### __Localization with Gradient-based Class Activation Maps__
-<table>
-<tr>
-<th>
+- __Localization with Gradient-based Class Activation Maps__
+> |![original](./assets/original.jpg)|![vgg_cam](./assets/vgg_cam.jpg)|![res_cam](./assets/res_cam.jpg)|![dense_cam](./assets/dense_cam.jpg)|
+> |:-:|:-:|:-:|:-:|
+> |<sup>_COVID-19 infected CXR_</sup>|<sup>_VGG-16_</sup>|<sup>_ResNet-18_</sup>|<sup>_DenseNet-121_</sup>|
 
-![original](./assets/original.jpg)
-
-</th>
-<th>
-
-![vgg_cam](./assets/vgg_cam.jpg)
-
-</th>
-<th>
-
-![res_cam](./assets/res_cam.jpg)
-
-</th>
-<th>
-
-![dense_cam](./assets/dense_cam.jpg)
-
-</th>
-</tr>
-
-<tr>
-<td>Original Image</td>
-<td>GradCAM(VGG-16)</td>
-<td>GradCAM(ResNet-18)</td>
-<td>GradCAM(DenseNet-121)</td>
-</tr>
-
-</table>
 <br>
 
 ## Conclusions
-> - DenseNet-121 having around `7.98 Million` parameters did better than VGG-16 and ResNet-18, with `138 Million` and `11.17 Million` parameters respectively.<br>
-> - Increasing model's parameter count doesn’t necessarily mean better results, but increasing residual connections might.<br>
-> - Random Oversampling helped in dealing with imbalanced data to a great extent.<br>
+> - DenseNet-121 having only `7.98 Million` parameters did relatively better than VGG-16 and ResNet-18, with `138 Million` and `11.17 Million` parameters respectively.<br>
+> - Increase in model's parameter count doesn’t necessarily acheive better results, but increase in residual connections might.<br>
+> - Oversampling helped in dealing with imbalanced data to a great extent.<br>
 > - Fine-tuning helped substantially by dealing with the comparatively small dataset and speeding up the training process.<br>
-> - GradCAM aided in getting insights about the areas in image that decides a model's predictions.<br>
-> - Looking back at the results, it is safe to assume that the models did a good job distinguishing various infectious and inflammatory lung diseases, which was rather hard manually.<br>
+> - GradCAM aided in localizing the areas in CXRs that decides a model's predictions.<br>
+> - The models did a good job distinguishing various infectious and inflammatory lung diseases, which is rather hard manually, as mentioned earlier.<br>
 
 ## References
 > [1] David L. Smith, John-Paul Grenier, Catherine Batte, and Bradley Spieler. __A Characteristic Chest Radiographic Pattern in the Setting of the COVID-19 Pandemic.__ Radiology: Cardiothoracic Imaging 2020 2:5.<br>

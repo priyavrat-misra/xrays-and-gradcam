@@ -16,9 +16,10 @@
 ## Overview
 > The project uses the COVID-19 Radiography Database [[3]](https://www.kaggle.com/tawsifurrahman/covid19-radiography-database) as it's dataset.
 > It has a total of `21165` Chest X-Rays (CXRs) belonging to 4 different classes (`COVID-19`, `Lung Opacity`, `Normal` and `Viral Pneumonia`).<br>
-> Three top scoring CNN architectures, __VGG-16__, __ResNet-18__ and __DenseNet-121__, trained on the ImageNet Dataset [[4]](http://image-net.org/), were chosen for __fine-tuning__ on the dataset.<br>
+> Three top scoring CNN architectures, __VGG-16__ [[4]](https://arxiv.org/abs/1409.1556 "Very Deep Convolutional Networks for Large-Scale Image Recognition"), __ResNet-18__ [[5]](https://arxiv.org/abs/1409.1556 "Deep Residual Learning for Image Recognition
+") and __DenseNet-121__ [[6]](https://arxiv.org/abs/1608.06993 "Densely Connected Convolutional Networks"), trained on the ImageNet Dataset [[7]](http://image-net.org/), were chosen for __fine-tuning__ on the dataset.<br>
 > The results obtained from the different architectures were then evaluted and compared.<br>
-> Finally, with the help of __Gradient weighted Class Activation Maps__ (Grad-CAM) [[5]](https://arxiv.org/abs/1610.02391 "Grad-CAM: Visual Explanations from Deep Networks via Gradient-based Localization") the affected areas in CXRs were localized.<br>
+> Finally, with the help of __Gradient weighted Class Activation Maps__ (Grad-CAM) [[8]](https://arxiv.org/abs/1610.02391 "Grad-CAM: Visual Explanations from Deep Networks via Gradient-based Localization") the affected areas in CXRs were localized.<br>
 
 * ___Note:___ The dataset and the trained models can be found in [here](https://drive.google.com/drive/folders/14L8wd-d2a3lvgqQtwV-y53Gsnn6Ud2-w?usp=sharing).<br>
 
@@ -169,16 +170,19 @@
 <br>
 
 ## Conclusions
-> - DenseNet-121 having only `7.98 Million` parameters did relatively better than VGG-16 and ResNet-18, with `138 Million` and `11.17 Million` parameters respectively.<br>
-> - Increase in model's parameter count doesn’t necessarily acheive better results, but increase in residual connections might.<br>
-> - Oversampling helped in dealing with imbalanced data to a great extent.<br>
-> - Fine-tuning helped substantially by dealing with the comparatively small dataset and speeding up the training process.<br>
-> - GradCAM aided in localizing the areas in CXRs that decides a model's predictions.<br>
-> - The models did a good job distinguishing various infectious and inflammatory lung diseases, which is rather hard manually, as mentioned earlier.<br>
+> - DenseNet-121 having only `7.98 Million` parameters did relatively better than VGG-16 and ResNet-18, with `138 Million` and `11.17 Million` parameters respectively.
+> - Increase in model's parameter count doesn’t necessarily acheive better results, but increase in residual connections might.
+> - Oversampling helped in dealing with imbalanced data to a great extent.
+> - Fine-tuning helped substantially by dealing with the comparatively small dataset and speeding up the training process.
+> - GradCAM aided in localizing the areas in CXRs that decides a model's predictions.
+> - The models did a good job distinguishing various infectious and inflammatory lung diseases, which is rather hard manually, as mentioned earlier.
 
 ## References
-> [1] David L. Smith, John-Paul Grenier, Catherine Batte, and Bradley Spieler. __A Characteristic Chest Radiographic Pattern in the Setting of the COVID-19 Pandemic.__ Radiology: Cardiothoracic Imaging 2020 2:5.<br>
-> [2] Hyun Jung Koo, Soyeoun Lim, Jooae Choe, Sang-Ho Choi, Heungsup Sung, and Kyung-Hyun Do. __Radiographic and CT Features of Viral Pneumonia.__ RadioGraphics 2018 38:3, 719-739.<br>
-> [3] Tawsifur Rahman, Muhammad Chowdhury, Amith Khandakar. __COVID-19 Radiography Database.__ Kaggle.<br>
-> [4] Deng, J. et al., 2009. __Imagenet: A large-scale hierarchical image database. In 2009 IEEE conference on computer vision and pattern recognition.__ pp. 248–255.<br>
-> [5] Ramprasaath R. Selvaraju, Michael Cogswell, Abhishek Das, Ramakrishna Vedantam, Devi Parikh, Dhruv Batra. __Grad-CAM: Visual Explanations from Deep Networks via Gradient-based Localization.__ arXiv:1610.02391v4.
+> - [1] David L. Smith, John-Paul Grenier, Catherine Batte, and Bradley Spieler. [A Characteristic Chest Radiographic Pattern in the Setting of the COVID-19 Pandemic](https://pubs.rsna.org/doi/10.1148/ryct.2020200280). Radiology: Cardiothoracic Imaging 2020 2:5.
+> - [2] Hyun Jung Koo, Soyeoun Lim, Jooae Choe, Sang-Ho Choi, Heungsup Sung, and Kyung-Hyun Do. [Radiographic and CT Features of Viral Pneumonia](https://pubs.rsna.org/doi/10.1148/rg.2018170048). RadioGraphics 2018 38:3, 719-739.
+> - [3] Tawsifur Rahman, Muhammad Chowdhury, Amith Khandakar. [COVID-19 Radiography Database](https://www.kaggle.com/tawsifurrahman/covid19-radiography-database). Kaggle.
+> - [4] Karen Simonyan, Andrew Zisserman. [Very Deep Convolutional Networks for Large-Scale Image Recognition](https://arxiv.org/abs/1409.1556). arxiv:1409.1556v6.
+> - [5] Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun. [Deep Residual Learning for Image Recognition](https://arxiv.org/abs/1512.03385). arxiv:1512.03385v1.
+> - [6] Gao Huang, Zhuang Liu, Laurens van der Maaten, Kilian Q. Weinberger. [Densely Connected Convolutional Networks](https://arxiv.org/abs/1608.06993). arxiv:1608.06993v5.
+> - [7] Deng, J. et al., 2009. [Imagenet: A large-scale hierarchical image database. In 2009 IEEE conference on computer vision and pattern recognition](http://image-net.org/). pp. 248–255.
+> - [8] Ramprasaath R. Selvaraju, Michael Cogswell, Abhishek Das, Ramakrishna Vedantam, Devi Parikh, Dhruv Batra. [Grad-CAM: Visual Explanations from Deep Networks via Gradient-based Localization](https://arxiv.org/abs/1610.02391). arXiv:1610.02391v4.

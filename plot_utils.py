@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from utils import deprocess_image
 
 
 def plot_summary(path):
@@ -78,12 +79,7 @@ def apply_mask(image, mask):
 
 
 def plot_gradcam(image, vgg_cam, res_cam, dense_cam):
-    image = image.cpu().numpy()
-    image = np.squeeze(np.transpose(image[0], (1, 2, 0)))
-    image = image * np.array((0.229, 0.224, 0.225)) + \
-        np.array((0.485, 0.456, 0.406))
-    image = image.clip(0, 1)
-
+    image = deprocess_image(image)
     name_dict = {
         'Original Image': image,
         'GradCAM (VGG-16)': apply_mask(image, vgg_cam),

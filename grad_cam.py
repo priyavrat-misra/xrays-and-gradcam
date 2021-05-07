@@ -42,4 +42,4 @@ class GradCAM:
         cam = cv2.resize(cam, image.shape[-2:][::-1])
         cam = cam - np.min(cam)
         cam = cam / np.max(cam)
-        return cam
+        return label, cam

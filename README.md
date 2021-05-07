@@ -5,6 +5,7 @@
 - [Overview](#overview)
 - [Steps](#steps)
 - [Results](#results)
+- [Usage](#usage)
 - [Conclusions](#conclusions)
 - [References](#references)
 
@@ -32,10 +33,10 @@
 >    |Val|60|60|60|60|240|
 >    |Test|60|60|60|60|240|
 > 3. [Fine-tune VGG-16, ResNet-18 and DenseNet-121](./2_finetune_models.ipynb "2_finetune_models.ipynb")
->    1. [Define Transformations](./utils.py#L15-L41)
->    2. [Handle imbalanced dataset with Weighted Random Sampling (Over-sampling)](#)
+>    1. [Define Transformations](./utils.py#L15-L33)
+>    2. [Handle imbalanced dataset with Weighted Random Sampling (Over-sampling)](./2_finetune_models.ipynb "2_finetune_models.ipynb/<cell 3>")
 >    3. [Prepare the Pre-trained models](./networks.py "networks.py")
->    4. [Fine-tune step with Early-stopping](./utils.py#L91-L159)
+>    4. [Fine-tune step with Early-stopping](./utils.py#L83-L151)
 >       - |Hyper-parameters||
 >         |:-|-:|
 >         |Learning rate|`0.00003`|
@@ -45,16 +46,16 @@
 >         |:-:|:-:|
 >         |`Categorical Cross Entropy`|`Adam`|
 >    5. [Plot running losses & accuracies](./plot_utils.py#L8-L42)
->       |Model|Summary Plot|
->       |:-:|:-:|
->       |VGG-16|![vgg_plot](./outputs/summary_plots/vgg.png)|
->       |ResNet-18|![res_plot](./outputs/summary_plots/resnet.png)|
->       |DenseNet-121|![dense_plot](./outputs/summary_plots/densenet.png)|
+>       - |Model|Summary Plot|
+>         |:-:|:-:|
+>         |VGG-16|![vgg_plot](./outputs/summary_plots/vgg.png)|
+>         |ResNet-18|![res_plot](./outputs/summary_plots/resnet.png)|
+>         |DenseNet-121|![dense_plot](./outputs/summary_plots/densenet.png)|
 > 4. [Results Evaluation](./3_evaluate_results.ipynb "3_evaluate_results.ipynb")
 >    1. [Plot confusion matrices](./plot_utils.py#L45-L69)
->    2. [Compute test-set Accuracy, Precision, Recall & F1-score](./utils.py#L72-L88)
+>    2. [Compute test-set Accuracy, Precision, Recall & F1-score](./utils.py#L64-L80)
 >    3. [Localize using Grad-CAM](./grad_cam.py)
-<br>
+> 5. [Inference](./overlay_cam.py)
 
 ## Results
 
@@ -160,18 +161,58 @@
 </td>
 </tr>
 </table>
-<br>
 
 - __Localization with Gradient-based Class Activation Maps__
 > |![original](./assets/original.jpg)|![vgg_cam](./assets/vgg_cam.jpg)|![res_cam](./assets/res_cam.jpg)|![dense_cam](./assets/dense_cam.jpg)|
 > |:-:|:-:|:-:|:-:|
 > |<sup>_COVID-19 infected CXR_</sup>|<sup>_VGG-16_</sup>|<sup>_ResNet-18_</sup>|<sup>_DenseNet-121_</sup>|
 
-<br>
+## Usage
+> - Clone the repository
+> ```bash
+> git clone 'https://github.com/priyavrat-misra/xrays-and-gradcam.git' && cd xrays-and-gradcam/
+> ```
+> - Install dependencies
+> ```bash
+> pip install -r requirements.txt
+> ```
+> - Using `argparse` script for inference
+> ```bash
+> python overlay_cam.py --help
+> ```
+> ```
+> usage: GradCAM on Chest X-Rays [-h] [-i IMAGE_PATH]
+>                                [-l {covid_19,lung_opacity,normal,pneumonia}]
+>                                -m {vgg16,resnet18,densenet121}
+>                                [-o OUTPUT_PATH]
+> 
+> Overlays given label's CAM on a given Chest X-Ray.
+> 
+> optional arguments:
+>   -h, --help            show this help message and exit
+>   -i IMAGE_PATH, --image-path IMAGE_PATH
+>                         Path to chest X-Ray image.
+>   -l {covid_19,lung_opacity,normal,pneumonia}, --label {covid_19,lung_opacity,normal,pneumonia}
+>                         Choose from covid_19, lung_opacity, normal &
+>                         pneumonia, to get the corresponding CAM. If not
+>                         mentioned, the highest scoring label is considered.
+>   -m {vgg16,resnet18,densenet121}, --model {vgg16,resnet18,densenet121}
+>                         Choose from vgg16, resnet18 or densenet121.
+>   -o OUTPUT_PATH, --output-path OUTPUT_PATH
+>                         Format: "<path> + <file_name> + .jpg"
+> ```
+> - An example
+> ```bash
+> python overlay_cam.py --image-path ./assets/original.jpg --label covid_19 --model resnet18 --output-path ./assets/dense_cam.jpg
+> ```
+> ```
+> GradCAM generated for label "covid_19".
+> GradCAM masked image saved to "./assets/res_cam.jpg".
+> ```
 
 ## Conclusions
 > - DenseNet-121 having only `7.98 Million` parameters did relatively better than VGG-16 and ResNet-18, with `138 Million` and `11.17 Million` parameters respectively.
-> - Increase in model's parameter count doesn’t necessarily acheive better results, but increase in residual connections might.
+> - Increase in model's parameter count doesn’t necessarily achieve better results, but increase in residual connections might.
 > - Oversampling helped in dealing with imbalanced data to a great extent.
 > - Fine-tuning helped substantially by dealing with the comparatively small dataset and speeding up the training process.
 > - GradCAM aided in localizing the areas in CXRs that decides a model's predictions.

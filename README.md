@@ -1,5 +1,6 @@
 # Classification and Gradient-based Localization of Chest Radiographs
 
+![cover](./assets/cover.png)
 ## Contents
 - [Introduction](#introduction)
 - [Overview](#overview)
